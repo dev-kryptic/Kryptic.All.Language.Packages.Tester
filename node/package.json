@@ -1,0 +1,13 @@
+{
+  "name": "kryptic-test-runner-node",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Verifies the Kryptic Node.js package against a running daemon.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "kryptic-daemon-client": "0.1.0"
+  }
+}

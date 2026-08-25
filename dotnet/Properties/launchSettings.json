@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Kryptic.Test.Runner": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
