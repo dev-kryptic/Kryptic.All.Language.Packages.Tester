@@ -1,7 +1,7 @@
 // Kryptic Node.js package verification.
 // Injects secrets from the local daemon and reports exactly what landed in
 // process.env - the same check the .NET runner does for IConfiguration.
-const kryptic = require('kryptic-daemon-client');
+const kryptic = require('@krypticdev/daemon-client');
 
 async function main() {
   const before = new Set(Object.keys(process.env));

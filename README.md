@@ -39,7 +39,7 @@ failed.
 | Language | Command | Package |
 | --- | --- | --- |
 | .NET | `cd dotnet && dotnet run` | `Kryptic.Daemon.Client` on NuGet |
-| Node.js | `cd node && npm install && node index.js` | `kryptic-daemon-client` on npm |
+| Node.js | `cd node && npm install && node index.js` | `@krypticdev/daemon-client` on npm |
 | Python | `cd python && pip install -r requirements.txt && python main.py` | `kryptic-daemon-client` on PyPI |
 | Go | `cd go && go run .` | `github.com/dev-kryptic/Kryptic.Go@v0.1.0` |
 | Ruby | `cd ruby && bundle install && bundle exec ruby main.rb` | `kryptic-daemon-client` on RubyGems |

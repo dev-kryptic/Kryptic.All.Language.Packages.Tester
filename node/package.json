@@ -8,6 +8,6 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "kryptic-daemon-client": "0.1.0"
+    "@krypticdev/daemon-client": "0.1.0"
   }
 }
