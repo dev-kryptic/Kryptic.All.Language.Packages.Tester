@@ -340,9 +340,11 @@ if want python && ! have_python; then
 fi
 
 # run-all.sh uses python3 -m venv; Debian splits that into python3-venv.
+# The venv module can import while ensurepip is still missing, which creates
+# a venv with no pip.
 if want python && have_cmd python3 && [[ "$PM" == apt ]]; then
-  if ! python3 -c "import venv" >/dev/null 2>&1; then
-    install_packages python3-venv || fail python3-venv
+  if ! python3 -c "import ensurepip" >/dev/null 2>&1; then
+    install_packages python3-venv python3-pip || fail python3-venv
   fi
 fi
 

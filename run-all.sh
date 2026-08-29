@@ -42,7 +42,20 @@ run_python() {
   section "Python"
   (
     cd "$ROOT/python"
-    python3 -m venv .venv >/dev/null 2>&1
+    if [[ -d .venv && ! -x .venv/bin/pip ]]; then
+      rm -rf .venv
+    fi
+    if ! python3 -m venv .venv; then
+      echo "python3 -m venv failed. On Ubuntu/Debian: sudo apt install python3-venv python3-pip" >&2
+      exit 1
+    fi
+    if [[ ! -x .venv/bin/pip ]]; then
+      python3 -m venv --clear --upgrade-deps .venv >/dev/null 2>&1 || true
+    fi
+    if [[ ! -x .venv/bin/pip ]]; then
+      echo "venv has no pip. On Ubuntu/Debian: sudo apt install python3-venv python3-pip" >&2
+      exit 1
+    fi
     ./.venv/bin/pip install --quiet --upgrade -r requirements.txt
     ./.venv/bin/python main.py
   ) && record python pass || record python fail
@@ -57,10 +70,20 @@ run_ruby() {
   section "Ruby"
   (
     cd "$ROOT/ruby"
+    if command -v gem >/dev/null 2>&1; then
+      gem install bundler --no-document --user-install >/dev/null 2>&1 \
+        || gem install bundler --no-document >/dev/null 2>&1 \
+        || true
+      gem_bin="$(ruby -e 'print Gem.user_dir' 2>/dev/null)/bin"
+      if [[ -d "$gem_bin" ]]; then
+        export PATH="$gem_bin:$PATH"
+      fi
+    fi
     if command -v bundle >/dev/null 2>&1; then
       bundle install --quiet && bundle exec ruby main.rb
     else
-      gem install --silent kryptic-daemon-client --version 0.1.0
+      gem install --user-install --no-document kryptic-daemon-client --version 0.1.3 \
+        || gem install --no-document kryptic-daemon-client --version 0.1.3
       ruby main.rb
     fi
   ) && record ruby pass || record ruby fail
@@ -83,7 +106,18 @@ run_cpp() {
 
 run_rust() {
   section "Rust"
-  ( cd "$ROOT/rust" && cargo run --quiet ) && record rust pass || record rust fail
+  (
+    if [[ -f "$HOME/.cargo/env" ]]; then
+      # rustup puts cargo here; a new login is not required.
+      # shellcheck disable=SC1091
+      . "$HOME/.cargo/env"
+    fi
+    if ! command -v cargo >/dev/null 2>&1; then
+      echo "cargo not found. Run ./install-deps.sh rust" >&2
+      exit 1
+    fi
+    cd "$ROOT/rust" && cargo run --quiet
+  ) && record rust pass || record rust fail
 }
 
 for language in "${LANGUAGES[@]}"; do
