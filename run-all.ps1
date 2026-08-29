@@ -27,7 +27,7 @@ $Failed = 0
 function Write-Section {
     param([string]$Title)
     Write-Host ""
-    Write-Host "── $Title ─────────────────────────────"
+    Write-Host "-- $Title -----------------------------"
 }
 
 function Record-Result {
@@ -175,9 +175,9 @@ foreach ($language in $Languages) {
 Write-Section "Summary"
 foreach ($language in $Languages) {
     if ($Results[$language] -eq "pass") {
-        Write-Host "  ✓ $language" -ForegroundColor Green
+        Write-Host "  [ok]   $language" -ForegroundColor Green
     } else {
-        Write-Host "  ✗ $language" -ForegroundColor Red
+        Write-Host "  [fail] $language" -ForegroundColor Red
     }
 }
 
