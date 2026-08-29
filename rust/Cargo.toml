@@ -1,0 +1,10 @@
+[package]
+name = "kryptic-test-runner"
+version = "1.0.0"
+edition = "2021"
+rust-version = "1.70"
+publish = false
+description = "Verifies the Kryptic Rust package against a running daemon."
+
+[dependencies]
+kryptic-daemon-client = "0.1.0"

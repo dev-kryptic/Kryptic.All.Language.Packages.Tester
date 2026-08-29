@@ -13,7 +13,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 
 LANGUAGES=("$@")
 if [[ ${#LANGUAGES[@]} -eq 0 ]]; then
-  LANGUAGES=(dotnet node python go ruby java cpp)
+  LANGUAGES=(dotnet node python go ruby java cpp rust)
 fi
 
 declare -A RESULTS
@@ -80,6 +80,11 @@ run_cpp() {
   ) && record cpp pass || record cpp fail
 }
 
+run_rust() {
+  section "Rust"
+  ( cd "$ROOT/rust" && cargo run --quiet ) && record rust pass || record rust fail
+}
+
 for language in "${LANGUAGES[@]}"; do
   case "$language" in
     dotnet) run_dotnet ;;
@@ -89,6 +94,7 @@ for language in "${LANGUAGES[@]}"; do
     ruby)   run_ruby ;;
     java)   run_java ;;
     cpp)    run_cpp ;;
+    rust)   run_rust ;;
     *)      echo "unknown language: $language" >&2; exit 2 ;;
   esac
 done

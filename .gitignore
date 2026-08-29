@@ -16,3 +16,5 @@ ruby/.bundle/
 java/target/
 
 cpp/build/
+
+rust/target/

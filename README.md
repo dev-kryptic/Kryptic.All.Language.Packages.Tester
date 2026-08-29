@@ -6,7 +6,7 @@ is the hands-on check that the whole chain works:
 **daemon -> local socket -> package -> your process environment** on the machine
 and OS you are testing.
 
-Every runner uses the same `kryptic.json`, so all seven should print the same
+Every runner uses the same `kryptic.json`, so all eight should print the same
 secrets.
 
 ## Before you start
@@ -45,6 +45,7 @@ failed.
 | Ruby | `cd ruby && bundle install && bundle exec ruby main.rb` | `kryptic-daemon-client` on RubyGems |
 | Java | `cd java && mvn compile exec:java` | `dev.kryptic:daemon-client` on Maven Central |
 | C++ | `cd cpp && cmake -S . -B build && cmake --build build && ./build/kryptic-test-runner` | `dev-kryptic/Kryptic.Cpp` `v0.1.0` via FetchContent |
+| Rust | `cd rust && cargo run` | `kryptic-daemon-client` on crates.io |
 
 The .NET runner uses `AddKryptic()` and reports `IConfiguration`. The Java runner
 reports system properties, because the JVM cannot set its own process environment.
@@ -76,6 +77,7 @@ injected 3 secret(s):
 KRYPTIC_ENV=staging ./run-all.sh          # a different environment
 KRYPTIC_DISABLED=true ./run-all.sh        # every runner should report SKIPPED (disabled)
 NODE_ENV=production node index.js          # the Node runner should no-op
+cd rust && RUST_ENV=production cargo run   # the Rust runner should no-op
 ```
 
 On Windows the same runners exercise the named-pipe transport instead of unix
