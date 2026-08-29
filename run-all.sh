@@ -17,15 +17,20 @@ if [[ ${#LANGUAGES[@]} -eq 0 ]]; then
   LANGUAGES=(dotnet node python go ruby java cpp rust)
 fi
 
-declare -A RESULTS
+# Space-delimited names of languages that passed. Avoids associative arrays
+# so this script runs on macOS /bin/bash 3.2 (no `declare -A`).
+PASSED=" "
 FAILED=0
 
 section() { printf '\n\033[1m── %s ─────────────────────────────\033[0m\n' "$1"; }
 
 record() {
   local language="$1" status="$2"
-  RESULTS[$language]=$status
-  [[ "$status" == "pass" ]] || FAILED=1
+  if [[ "$status" == "pass" ]]; then
+    PASSED="${PASSED}${language} "
+  else
+    FAILED=1
+  fi
 }
 
 run_dotnet() {
@@ -136,10 +141,10 @@ done
 
 section "Summary"
 for language in "${LANGUAGES[@]}"; do
-  if [[ "${RESULTS[$language]}" == "pass" ]]; then
-    printf '  \033[32m✓\033[0m %s\n' "$language"
+  if [[ "$PASSED" == *" ${language} "* ]]; then
+    printf '  \033[32m[ok]\033[0m   %s\n' "$language"
   else
-    printf '  \033[31m✗\033[0m %s\n' "$language"
+    printf '  \033[31m[fail]\033[0m %s\n' "$language"
   fi
 done
 
