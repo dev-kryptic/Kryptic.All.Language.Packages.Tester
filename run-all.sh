@@ -7,6 +7,7 @@
 #
 # Prerequisites: the daemon is running and signed in (`kryptic status`), and
 # kryptic.json in each directory points at a project you can read.
+# On a fresh machine, run ./install-deps.sh first.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"

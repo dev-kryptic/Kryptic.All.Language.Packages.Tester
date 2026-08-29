@@ -16,6 +16,7 @@ package, and process environment work together on the machine you are testing.
 ## Development
 
 ```bash
+./install-deps.sh   # once, if language toolchains are missing
 ./run-all.sh
 ```
 

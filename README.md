@@ -21,17 +21,38 @@ you can read (copy it from the project page in the dashboard).
 
 ## Run everything
 
+Install the language toolchains first (already-installed tools are skipped), then run:
+
 ```bash
+./install-deps.sh
 ./run-all.sh
+```
+
+On Windows (PowerShell):
+
+```powershell
+.\install-deps.ps1
+.\run-all.ps1
 ```
 
 Or one language at a time:
 
 ```bash
+./install-deps.sh node python
 ./run-all.sh node python
 ```
 
-The script prints a pass/fail line per language and exits non-zero if any
+```powershell
+.\install-deps.ps1 node python
+.\run-all.ps1 node python
+```
+
+`install-deps.sh` uses Homebrew on macOS, and apt, dnf, pacman, zypper, or apk
+on Linux. `install-deps.ps1` uses winget. The C++ and Rust runners also need a
+C++ toolchain: Xcode Command Line Tools on macOS, `g++` on Linux, Visual Studio
+C++ build tools on Windows.
+
+The scripts print a pass/fail line per language and exit non-zero if any
 failed.
 
 ## Run them individually
@@ -78,6 +99,11 @@ KRYPTIC_ENV=staging ./run-all.sh          # a different environment
 KRYPTIC_DISABLED=true ./run-all.sh        # every runner should report SKIPPED (disabled)
 NODE_ENV=production node index.js          # the Node runner should no-op
 cd rust && RUST_ENV=production cargo run   # the Rust runner should no-op
+```
+
+```powershell
+$env:KRYPTIC_ENV = "staging"; .\run-all.ps1
+$env:KRYPTIC_DISABLED = "true"; .\run-all.ps1
 ```
 
 On Windows the same runners exercise the named-pipe transport instead of unix
