@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
     kryptic-daemon-client
     GIT_REPOSITORY https://github.com/dev-kryptic/Kryptic.Cpp.git
-    GIT_TAG v0.1.0
+    GIT_TAG v1.0.0
 )
 FetchContent_MakeAvailable(kryptic-daemon-client)
 

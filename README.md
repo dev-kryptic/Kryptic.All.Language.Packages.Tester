@@ -62,10 +62,10 @@ failed.
 | .NET | `cd dotnet && dotnet run` | `Kryptic.Daemon.Client` on NuGet |
 | Node.js | `cd node && npm install && node index.js` | `@krypticdev/daemon-client` on npm |
 | Python | `cd python && pip install -r requirements.txt && python main.py` | `kryptic-daemon-client` on PyPI |
-| Go | `cd go && go run .` | `github.com/dev-kryptic/Kryptic.Go@v0.1.0` |
+| Go | `cd go && go run .` | `github.com/dev-kryptic/Kryptic.Go@v1.0.0` |
 | Ruby | `cd ruby && bundle install && bundle exec ruby main.rb` | `kryptic-daemon-client` on RubyGems |
 | Java | `cd java && mvn compile exec:java` | `dev.kryptic:daemon-client` on Maven Central |
-| C++ | `cd cpp && cmake -S . -B build && cmake --build build && ./build/kryptic-test-runner` | `dev-kryptic/Kryptic.Cpp` `v0.1.0` via FetchContent |
+| C++ | `cd cpp && cmake -S . -B build && cmake --build build && ./build/kryptic-test-runner` | `dev-kryptic/Kryptic.Cpp` `v1.0.0` via FetchContent |
 | Rust | `cd rust && cargo run` | `kryptic-daemon-client` on crates.io |
 
 The .NET runner uses `AddKryptic()` and reports `IConfiguration`. The Java runner

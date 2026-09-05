@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Kryptic.Daemon.Client" Version="0.1.0" />
+      <PackageReference Include="Kryptic.Daemon.Client" Version="1.0.0" />
     </ItemGroup>
 
 </Project>
