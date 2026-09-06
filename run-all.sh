@@ -14,7 +14,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 
 LANGUAGES=("$@")
 if [[ ${#LANGUAGES[@]} -eq 0 ]]; then
-  LANGUAGES=(dotnet node python go ruby java cpp rust)
+  LANGUAGES=(dotnet node python go ruby java java-spring-boot cpp rust)
 fi
 
 # Space-delimited names of languages that passed. Avoids associative arrays
@@ -94,9 +94,26 @@ run_ruby() {
   ) && record ruby pass || record ruby fail
 }
 
+# The Spring Boot artifact is not always on Central yet. When this repo sits
+# next to Kryptic.Packages/Kryptic.Java, install those modules locally first.
+install_local_kryptic_java() {
+  local java_pkg="$ROOT/../Kryptic.Packages/Kryptic.Java"
+  if [[ -f "$java_pkg/pom.xml" ]]; then
+    ( cd "$java_pkg" && mvn -q -DskipTests install )
+  fi
+}
+
 run_java() {
   section "Java"
   ( cd "$ROOT/java" && mvn -q compile exec:java ) && record java pass || record java fail
+}
+
+run_java_spring_boot() {
+  section "Java Spring Boot"
+  (
+    install_local_kryptic_java
+    cd "$ROOT/java-spring-boot" && mvn -q compile exec:java
+  ) && record java-spring-boot pass || record java-spring-boot fail
 }
 
 run_cpp() {
@@ -133,6 +150,7 @@ for language in "${LANGUAGES[@]}"; do
     go)     run_go ;;
     ruby)   run_ruby ;;
     java)   run_java ;;
+    java-spring-boot) run_java_spring_boot ;;
     cpp)    run_cpp ;;
     rust)   run_rust ;;
     *)      echo "unknown language: $language" >&2; exit 2 ;;

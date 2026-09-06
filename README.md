@@ -6,7 +6,7 @@ is the hands-on check that the whole chain works:
 **daemon -> local socket -> package -> your process environment** on the machine
 and OS you are testing.
 
-Every runner uses the same `kryptic.json`, so all eight should print the same
+Every runner uses the same `kryptic.json`, so all nine should print the same
 secrets.
 
 ## Before you start
@@ -65,11 +65,14 @@ failed.
 | Go | `cd go && go run .` | `github.com/dev-kryptic/Kryptic.Go@v1.0.0` |
 | Ruby | `cd ruby && bundle install && bundle exec ruby main.rb` | `kryptic-daemon-client` on RubyGems |
 | Java | `cd java && mvn compile exec:java` | `dev.kryptic:daemon-client` on Maven Central |
+| Java Spring Boot | `cd java-spring-boot && mvn compile exec:java` | `dev.kryptic:daemon-client-spring-boot` |
 | C++ | `cd cpp && cmake -S . -B build && cmake --build build && ./build/kryptic-test-runner` | `dev-kryptic/Kryptic.Cpp` `v1.0.0` via FetchContent |
 | Rust | `cd rust && cargo run` | `kryptic-daemon-client` on crates.io |
 
 The .NET runner uses `AddKryptic()` and reports `IConfiguration`. The Java runner
 reports system properties, because the JVM cannot set its own process environment.
+The Spring Boot runner uses `@EnableKryptic` and reports the `kryptic` property
+source on the Spring Environment.
 
 ## What a pass looks like
 

@@ -170,7 +170,7 @@ Update-SessionEnvironment
 Import-VsDevEnvironment
 
 $Root = $PSScriptRoot
-$ValidLanguages = @("dotnet", "node", "python", "go", "ruby", "java", "cpp", "rust")
+$ValidLanguages = @("dotnet", "node", "python", "go", "ruby", "java", "java-spring-boot", "cpp", "rust")
 
 if (-not $Languages -or $Languages.Count -eq 0) {
     $Languages = $ValidLanguages
@@ -282,8 +282,28 @@ function Invoke-Ruby {
     }
 }
 
+function Install-LocalKrypticJava {
+    $javaPkg = Join-Path $Root "..\Kryptic.Packages\Kryptic.Java"
+    if (Test-Path (Join-Path $javaPkg "pom.xml")) {
+        Push-Location $javaPkg
+        try {
+            mvn -q -DskipTests install
+        } finally {
+            Pop-Location
+        }
+    }
+}
+
 function Invoke-Java {
     Invoke-Language "java" "Java" "java" {
+        mvn -q compile exec:java
+    }
+}
+
+function Invoke-JavaSpringBoot {
+    Invoke-Language "java-spring-boot" "Java Spring Boot" "java-spring-boot" {
+        Install-LocalKrypticJava
+        if ($LASTEXITCODE -ne 0 -and $null -ne $LASTEXITCODE) { return }
         mvn -q compile exec:java
     }
 }
@@ -345,6 +365,7 @@ foreach ($language in $Languages) {
         "go"     { Invoke-Go }
         "ruby"   { Invoke-Ruby }
         "java"   { Invoke-Java }
+        "java-spring-boot" { Invoke-JavaSpringBoot }
         "cpp"    { Invoke-Cpp }
         "rust"   { Invoke-Rust }
         default {

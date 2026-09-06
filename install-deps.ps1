@@ -13,7 +13,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$ValidLanguages = @("dotnet", "node", "python", "go", "ruby", "java", "cpp", "rust")
+$ValidLanguages = @("dotnet", "node", "python", "go", "ruby", "java", "java-spring-boot", "cpp", "rust")
 
 if (-not $Languages -or $Languages.Count -eq 0) {
     $Languages = $ValidLanguages
@@ -297,7 +297,9 @@ if ($Languages -contains "ruby" -and (Test-Cmd "gem")) {
     }
 }
 
-if ($Languages -contains "java") {
+$NeedsJvm = ($Languages -contains "java") -or ($Languages -contains "java-spring-boot")
+
+if ($NeedsJvm) {
     if (-not (Test-Cmd "java")) {
         if (-not (Install-WingetPackage -Id "EclipseAdoptium.Temurin.17.JDK" -Name "Temurin JDK 17")) {
             $Failed.Add("java") | Out-Null
@@ -356,7 +358,7 @@ if ($Languages -contains "node")   { Write-Check "node" (Test-Cmd "node") }
 if ($Languages -contains "python") { Write-Check "python" (Test-RealPython) }
 if ($Languages -contains "go")     { Write-Check "go" (Test-Cmd "go") }
 if ($Languages -contains "ruby")   { Write-Check "ruby" (Test-Cmd "ruby") }
-if ($Languages -contains "java")   {
+if ($NeedsJvm) {
     Write-Check "java" (Test-Cmd "java")
     Write-Check "mvn" (Test-Cmd "mvn")
 }

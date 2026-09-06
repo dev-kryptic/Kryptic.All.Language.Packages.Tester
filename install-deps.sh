@@ -9,7 +9,7 @@
 # Open a new terminal after this finishes if a later command is still not found.
 set -uo pipefail
 
-VALID_LANGUAGES=(dotnet node python go ruby java cpp rust)
+VALID_LANGUAGES=(dotnet node python go ruby java java-spring-boot cpp rust)
 
 usage_error() {
   echo "unknown language: $1" >&2
@@ -398,7 +398,11 @@ if want ruby && have_cmd ruby && ! have_cmd bundle; then
   fi
 fi
 
-if want java && ! have_java; then
+want_jvm() {
+  want java || want java-spring-boot
+}
+
+if want_jvm && ! have_java; then
   case "$PM" in
     brew)
       echo "Installing Temurin JDK 17..."
@@ -419,7 +423,7 @@ if want java && ! have_java; then
   refresh_path
 fi
 
-if want java && ! have_cmd mvn; then
+if want_jvm && ! have_cmd mvn; then
   case "$PM" in
     brew) install_packages maven || fail maven ;;
     apt) install_packages maven || fail maven ;;
@@ -514,7 +518,7 @@ if want node; then write_check node "$(bool have_cmd node)"; fi
 if want python; then write_check python "$(bool have_python)"; fi
 if want go; then write_check go "$(bool have_cmd go)"; fi
 if want ruby; then write_check ruby "$(bool have_cmd ruby)"; fi
-if want java; then
+if want_jvm; then
   write_check java "$(bool have_java)"
   write_check mvn "$(bool have_cmd mvn)"
 fi
