@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "Kryptic.DynamicSecrets.Probe": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "KRYPTIC_TIMEOUT_MS": "120000"
+      }
+    }
+  }
+}

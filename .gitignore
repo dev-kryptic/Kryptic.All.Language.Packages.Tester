@@ -3,6 +3,8 @@
 
 dotnet/bin/
 dotnet/obj/
+dotnet-dynamic/bin/
+dotnet-dynamic/obj/
 
 node/node_modules/
 

@@ -1,0 +1,126 @@
+# Local backends for dynamic-secret templates. No AWS.
+# Run from this directory (Kryptic.Test.Runner):
+#
+#   docker compose up -d
+#   docker compose ps
+#
+# Ports are published on the host (0.0.0.0). Use 127.0.0.1 in the dashboard,
+# not localhost: Docker does not listen on [::1], so localhost often fails
+# IPv6 then hits the wrong Postgres on 127.0.0.1.
+#
+# Dashboard provider envelopes, TLS off, host 127.0.0.1:
+#   Postgres   5432   user kryptic   password kryptic   db kryptic_dynamic_secrets_test
+#   MySQL      3306   user kryptic   password kryptic   db kryptic_dynamic_secrets_test
+#   Redis      6379   user default   password kryptic
+#   Cassandra  9042   user kryptic   password kryptic   dc dc1   keyspace kryptic_dynamic_secrets_test
+#   Oracle     1521   user SYSTEM    password kryptic   service FREEPDB1
+#
+# These passwords are for this disposable stack only.
+
+name: kryptic-dynamic-probe
+
+services:
+  postgres:
+    image: postgres:17
+    ports:
+      - "0.0.0.0:5432:5432"
+    environment:
+      POSTGRES_USER: kryptic
+      POSTGRES_PASSWORD: kryptic
+      POSTGRES_DB: kryptic_dynamic_secrets_test
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kryptic -d kryptic_dynamic_secrets_test"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mysql:
+    image: mysql:8.4
+    ports:
+      - "0.0.0.0:3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: kryptic
+      MYSQL_ROOT_HOST: "%"
+      MYSQL_USER: kryptic
+      MYSQL_PASSWORD: kryptic
+      MYSQL_DATABASE: kryptic_dynamic_secrets_test
+    volumes:
+      - mysqldata:/var/lib/mysql
+      - ./mysql-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-pkryptic"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  redis:
+    image: redis:7
+    ports:
+      - "0.0.0.0:6379:6379"
+    command: ["redis-server", "--requirepass", "kryptic"]
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "kryptic", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  cassandra:
+    image: cassandra:4.1
+    ports:
+      - "0.0.0.0:9042:9042"
+    environment:
+      CASSANDRA_CLUSTER_NAME: kryptic
+      CASSANDRA_DC: dc1
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      MAX_HEAP_SIZE: 512M
+      HEAP_NEWSIZE: 128M
+      JVM_OPTS: "-Dcassandra.superuser_setup_delay_ms=0"
+    mem_limit: 1g
+    volumes:
+      - cassandradata:/var/lib/cassandra
+      - ./cassandra/enable-auth.sh:/enable-auth.sh:ro
+    command: ["bash", "/enable-auth.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh -u cassandra -p cassandra -e 'DESCRIBE KEYSPACES'"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 90s
+
+  cassandra-init:
+    image: cassandra:4.1
+    depends_on:
+      cassandra:
+        condition: service_healthy
+    restart: "no"
+    volumes:
+      - ./cassandra/init.cql:/init.cql:ro
+    entrypoint: ["cqlsh", "cassandra", "-u", "cassandra", "-p", "cassandra", "-f", "/init.cql"]
+
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    ports:
+      - "0.0.0.0:1521:1521"
+    environment:
+      ORACLE_PASSWORD: kryptic
+    shm_size: 1gb
+    volumes:
+      - oracledata:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+
+volumes:
+  pgdata:
+  mysqldata:
+  redisdata:
+  cassandradata:
+  oracledata:
